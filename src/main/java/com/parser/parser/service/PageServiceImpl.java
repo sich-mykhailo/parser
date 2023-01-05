@@ -13,12 +13,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class PageServiceImpl implements PageService {
+    private static final int FIRST_PAGE_NUMBER = 0;
 
     private final FileService writeToFileService;
     private final Workbook workbook = new XSSFWorkbook();
@@ -26,22 +28,30 @@ public class PageServiceImpl implements PageService {
     private final ParserService parserService;
 
     public List<PageRequestDto> getAllItemsFromMainUrl(String mainUrl) {
-        int olxPage = 0;
+        int olxPage = FIRST_PAGE_NUMBER;
         Set<PageRequestDto> items = new HashSet<>();
         while (olxPage < Constants.NUMBER_OF_OLX_PAGES) {
-            String completePage = mainUrl + "?page=" + olxPage;
-           Document doc = JsoupConnection.createConnection(completePage);
             olxPage++;
+            String completePage = mainUrl + "?page=" + olxPage;
+            Document doc = JsoupConnection.createConnection(completePage);
             log.info("page number:" + olxPage);
-            if(Objects.nonNull(doc)) {
-                Elements h1Elements = doc.getElementsByAttributeValue("class", HtmlNames.GENERAL_ELEMENTS);
+            if (Objects.nonNull(doc) && olxPage < 2) {
+                Elements h1Elements = doc.getElementsByAttributeValue("class", HtmlNames.FIST_PAGE_CLASS_NAME);
                 for (Element h1Element : h1Elements) {
-                    String localUrl = h1Element.attributes().get("href");
+                    String localUrl = h1Element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
                     String title = Objects.requireNonNull(h1Element.children().first()).attributes().get("alt");
                     PageRequestDto itemRequestDto = new PageRequestDto();
                     itemRequestDto.setUrl(localUrl);
                     itemRequestDto.setTitle(title);
                     items.add(itemRequestDto);
+                }
+            } else if (Objects.nonNull(doc)) {
+                Elements elements = doc.getElementsByClass(HtmlNames.CLASS_NAME);
+                for (Element element : elements) {
+                    String pageUrl = HtmlNames.OLX_BASE + element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
+                    PageRequestDto pageRequestDto = new PageRequestDto();
+                    pageRequestDto.setUrl(pageUrl);
+                    items.add(pageRequestDto);
                 }
             }
         }
@@ -66,7 +76,7 @@ public class PageServiceImpl implements PageService {
         sheet.setColumnWidth(6, 4000);
         sheet.setColumnWidth(7, 6000);
         sheet.setColumnWidth(8, 6000);
-        sheet.setColumnWidth(9,6000);
+        sheet.setColumnWidth(9, 6000);
 
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);

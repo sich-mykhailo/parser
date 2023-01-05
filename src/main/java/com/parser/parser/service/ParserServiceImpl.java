@@ -35,14 +35,14 @@ public class ParserServiceImpl implements ParserService {
         for (PageRequestDto item : pages) {
             if (Objects.nonNull(item.getUrl())) {
                 PageRequestDto itemRequestDto = itemParse(item.getUrl());
-                if (ParserUtils.mapToNumbers(itemRequestDto.getPrice()) != -1) {
-                    itemRequestDto.setTitle(item.getTitle());
+                    if (Objects.nonNull(item.getTitle())) {
+                        itemRequestDto.setTitle(item.getTitle());
+                    }
                     itemRequestDto.setUrl(item.getUrl());
                     Page completeItem = pageDtoMapper.mapToModel(itemRequestDto);
                     completeItem.setId(count++);
                     completeItems.add(completeItem);
                 }
-            }
             if (completeItems.size() % 100 == 0) {
                 log.info("completed items: " + completeItems.size());
             }
@@ -54,21 +54,22 @@ public class ParserServiceImpl implements ParserService {
         PageRequestDto itemRequestDto = new PageRequestDto();
         try {
             Document doc = JsoupConnection.createConnection(itemUrl);
-            if(doc != null) {
-                String id = doc.getElementsByClass("css-sddt1v-Text eu5v0x0").first() == null ?
-                   doc.getElementsByClass("css-1aw4772-Text eu5v0x0").first().text()
-                        : doc.getElementsByClass("css-sddt1v-Text eu5v0x0").first().text();
+            if (doc != null) {
+                String id = Objects.nonNull(doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0"))
+                        ? doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0").text() : "-1";
                 itemRequestDto.setViews(getViews(ParserUtils.mapToNumbers(id).toString()));
+                itemRequestDto.setTitle(doc.getElementsByTag("title").first().text());
                 itemRequestDto.setPrice(doc.getElementsByClass(HtmlNames.PRICE).text());
                 itemRequestDto.setDate(doc.getElementsByClass(HtmlNames.DATE).text());
                 itemRequestDto.setOblast(doc.getElementsByClass("css-tyi2d1").get(4).text());
-                itemRequestDto.setStartOfWork(doc.getElementsByClass(HtmlNames.START_OF_WORK).first().text());
+                //itemRequestDto.setStartOfWork(Objects.requireNonNull(doc.getElementsByClass(HtmlNames.START_OF_WORK).first().text()));
                 itemRequestDto.setSection(doc.getElementsByClass("css-tyi2d1").get(1).text());
                 itemRequestDto.setDateOfPublication(Objects.nonNull(doc.getElementsByClass("css-sg1fy9").first()) ?
                         doc.getElementsByClass("css-sg1fy9").first().text() : "-");
-                itemRequestDto.setTitleForTable(doc.getElementsByClass("css-sg1fy9").get(1).text());
-                itemRequestDto.setIndividual(doc.getElementsByClass("css-xl6fe0-Text eu5v0x0").first().text());
+              //  itemRequestDto.setTitleForTable(doc.getElementsByClass("css-sg1fy9").get(1).text());
+               // itemRequestDto.setIndividual(doc.getElementsByClass("css-xl6fe0-Text eu5v0x0").first().text());
                 handleListData(doc.getElementsByClass("css-xl6fe0-Text eu5v0x0"), itemRequestDto);
+                itemRequestDto.setIsTop(false);
                 Elements deliveryElement = doc.getElementsByClass("css-x30oa2-Text eu5v0x0");
                 itemRequestDto.setOlxDelivery(deliveryElement.size() != 0);
             }

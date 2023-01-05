@@ -7,6 +7,7 @@ import com.parser.parser.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.cloud.aws.messaging.listener.Acknowledgment;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.http.HttpEntity;
@@ -31,8 +32,6 @@ public class SqsServiceImpl implements SqsService {
     private final RestTemplate restTemplate;
     @Value("${cloud.aws.end-point.uri}")
     private String endPoint;
-    @Value("${bot-service.url}")
-    private String botUrl;
     private final QueueMessagingTemplate sqs;
 
     public void putMessageInQueue(String payload, String userEmail, String userId, String input) {
@@ -44,11 +43,14 @@ public class SqsServiceImpl implements SqsService {
         sqs.send(endPoint, msg);
     }
 
-    @SqsListener(value = Constants.QUEUE_NAME, deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+    @SqsListener(value = Constants.QUEUE_NAME, deletionPolicy = SqsMessageDeletionPolicy.NEVER)
     public void receiveMessage(String message,
                                @Header(SENDER_HEADER) String senderId,
                                @Header(USER_EMAIL_HEADER) String userEmail,
-                               @Header(USER_INPUT_HEADER) String userInput) {
+                               @Header(USER_INPUT_HEADER) String userInput,
+                               @Header(BOT_BASE_URL) String botUrl,
+                               Acknowledgment acknowledgment) {
+        acknowledgment.acknowledge();
         pageService.parsePage(userInput);
         String googleFileUrl = "Default message";
         File file = googleDriveService.sendFile(userEmail);
@@ -63,10 +65,6 @@ public class SqsServiceImpl implements SqsService {
         body.put("chatId", senderId);
         body.put("userInput", userInput);
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
-        restTemplate.postForEntity(
-                botUrl + "send-queue",
-                requestEntity,
-                String.class
-        );
+        restTemplate.postForEntity(botUrl + "/send-queue", requestEntity, String.class);
     }
 }
