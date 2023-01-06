@@ -44,8 +44,7 @@ public class SqsServiceImpl implements SqsService {
     }
 
     @SqsListener(value = Constants.QUEUE_NAME, deletionPolicy = SqsMessageDeletionPolicy.NEVER)
-    public void receiveMessage(String message,
-                               @Header(SENDER_HEADER) String senderId,
+    public void receiveMessage(@Header(SENDER_HEADER) String senderId,
                                @Header(USER_EMAIL_HEADER) String userEmail,
                                @Header(USER_INPUT_HEADER) String userInput,
                                @Header(BOT_BASE_URL) String botUrl,

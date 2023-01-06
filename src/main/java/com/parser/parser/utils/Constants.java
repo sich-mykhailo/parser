@@ -11,7 +11,6 @@ public final class Constants {
     public static final String GOOGLE_FILE_URL = "https://docs.google.com/spreadsheets/d/";
     public static final String XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public static final int NUMBER_OF_OLX_PAGES = 2;
-    public static final String OLX_TOKEN = "Bearer 9d6b93828f768a9967d98b15c50da0faf1ba8d8e";
 
     /** AWS */
     public static final String QUEUE_NAME = "report-queue";

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +25,8 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class ParserServiceImpl implements ParserService {
+    @Value("${olx.token}")
+    private String olxToken;
     private final RestTemplate restTemplate;
     private final PageDtoMapper pageDtoMapper;
 
@@ -39,6 +42,8 @@ public class ParserServiceImpl implements ParserService {
                         itemRequestDto.setTitle(item.getTitle());
                     }
                     itemRequestDto.setUrl(item.getUrl());
+                    itemRequestDto.setIsTop(item.getIsTop());
+                    itemRequestDto.setOlxDelivery(item.isOlxDelivery());
                     Page completeItem = pageDtoMapper.mapToModel(itemRequestDto);
                     completeItem.setId(count++);
                     completeItems.add(completeItem);
@@ -55,21 +60,20 @@ public class ParserServiceImpl implements ParserService {
         try {
             Document doc = JsoupConnection.createConnection(itemUrl);
             if (doc != null) {
-                String id = Objects.nonNull(doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0"))
+                String id = doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0").size() != 0
                         ? doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0").text() : "-1";
                 itemRequestDto.setViews(getViews(ParserUtils.mapToNumbers(id).toString()));
                 itemRequestDto.setTitle(doc.getElementsByTag("title").first().text());
                 itemRequestDto.setPrice(doc.getElementsByClass(HtmlNames.PRICE).text());
                 itemRequestDto.setDate(doc.getElementsByClass(HtmlNames.DATE).text());
-                itemRequestDto.setOblast(doc.getElementsByClass("css-tyi2d1").get(4).text());
-                //itemRequestDto.setStartOfWork(Objects.requireNonNull(doc.getElementsByClass(HtmlNames.START_OF_WORK).first().text()));
+                itemRequestDto.setOblast(doc.getElementsByClass("css-tyi2d1").text());
+                itemRequestDto.setStartOfWork(doc.getElementsByClass(HtmlNames.START_OF_WORK).first().text());
                 itemRequestDto.setSection(doc.getElementsByClass("css-tyi2d1").get(1).text());
                 itemRequestDto.setDateOfPublication(Objects.nonNull(doc.getElementsByClass("css-sg1fy9").first()) ?
                         doc.getElementsByClass("css-sg1fy9").first().text() : "-");
-              //  itemRequestDto.setTitleForTable(doc.getElementsByClass("css-sg1fy9").get(1).text());
-               // itemRequestDto.setIndividual(doc.getElementsByClass("css-xl6fe0-Text eu5v0x0").first().text());
-                handleListData(doc.getElementsByClass("css-xl6fe0-Text eu5v0x0"), itemRequestDto);
-                itemRequestDto.setIsTop(false);
+                itemRequestDto.setTitleForTable(doc.getElementsByClass("css-sg1fy9").get(1).text());
+                itemRequestDto.setIndividual(doc.getElementsByClass("css-65jx20-TextStyled er34gjf0").first().text());
+                handleListData(doc.getElementsByClass("css-65jx20-TextStyled er34gjf0"), itemRequestDto);
                 Elements deliveryElement = doc.getElementsByClass("css-x30oa2-Text eu5v0x0");
                 itemRequestDto.setOlxDelivery(deliveryElement.size() != 0);
             }
@@ -93,7 +97,7 @@ public class ParserServiceImpl implements ParserService {
                 + advertisementId
                 + "/page-views/";
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", Constants.OLX_TOKEN);
+        httpHeaders.add("Authorization", olxToken);
         httpHeaders.setConnection("keep-alive");
         httpHeaders.setContentType(MediaType.APPLICATION_XML);
         HttpEntity<String> request = new HttpEntity<>("", httpHeaders);

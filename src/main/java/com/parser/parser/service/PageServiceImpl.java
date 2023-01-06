@@ -21,6 +21,9 @@ import java.util.*;
 @Log4j2
 public class PageServiceImpl implements PageService {
     private static final int FIRST_PAGE_NUMBER = 0;
+    private static final String ATTRIBUTE_CLASS = "class";
+    private static final String ATTRIBUTE_ALT = "alt";
+    private static final String PAGE_CONNECTOR = "?page=";
 
     private final FileService writeToFileService;
     private final Workbook workbook = new XSSFWorkbook();
@@ -32,17 +35,19 @@ public class PageServiceImpl implements PageService {
         Set<PageRequestDto> items = new HashSet<>();
         while (olxPage < Constants.NUMBER_OF_OLX_PAGES) {
             olxPage++;
-            String completePage = mainUrl + "?page=" + olxPage;
+            String completePage = mainUrl + PAGE_CONNECTOR + olxPage;
             Document doc = JsoupConnection.createConnection(completePage);
             log.info("page number:" + olxPage);
             if (Objects.nonNull(doc) && olxPage < 2) {
-                Elements h1Elements = doc.getElementsByAttributeValue("class", HtmlNames.FIST_PAGE_CLASS_NAME);
-                for (Element h1Element : h1Elements) {
-                    String localUrl = h1Element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
-                    String title = Objects.requireNonNull(h1Element.children().first()).attributes().get("alt");
+                Elements elements = doc.getElementsByAttributeValue(ATTRIBUTE_CLASS, HtmlNames.FIST_PAGE_CLASS_NAME);
+                for (Element element : elements) {
+                    String localUrl = element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
+                    String title = Objects.requireNonNull(element.children().first()).attributes().get(ATTRIBUTE_ALT);
                     PageRequestDto itemRequestDto = new PageRequestDto();
                     itemRequestDto.setUrl(localUrl);
                     itemRequestDto.setTitle(title);
+                    itemRequestDto.setOlxDelivery(element.getElementsByClass("delivery-badge__icon").size() != 0);
+                    itemRequestDto.setIsTop(element.getElementsByClass("inlblk icon paid type2 abs zi2").size() != 0);
                     items.add(itemRequestDto);
                 }
             } else if (Objects.nonNull(doc)) {
@@ -51,6 +56,8 @@ public class PageServiceImpl implements PageService {
                     String pageUrl = HtmlNames.OLX_BASE + element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
                     PageRequestDto pageRequestDto = new PageRequestDto();
                     pageRequestDto.setUrl(pageUrl);
+                    pageRequestDto.setOlxDelivery(element.getElementsByClass("css-10arydl").size() != 0);
+                    pageRequestDto.setIsTop(element.getElementsByClass("css-1katuj6").text().equals("ТОП"));
                     items.add(pageRequestDto);
                 }
             }

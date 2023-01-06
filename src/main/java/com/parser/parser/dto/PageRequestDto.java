@@ -1,13 +1,17 @@
 package com.parser.parser.dto;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 public class PageRequestDto {
     private String url;
     private String title;
-    private String price;
     private String date;
+    private String price;
     private String views;
     private String orderId;
     private String startOfWork;

@@ -51,11 +51,11 @@ public class GoogleDriveService {
                 googleFile.setCopyRequiresWriterPermission(true);
                 setViewPermissionsForUser(driveService, googleFile.getId(), userEmail);
             } catch (IOException e) {
-                log.warn("File wasn't send");
+                log.warn("File wasn't sent");
                 emailService.sendSimpleEmail(adminEmail, "Google token error!",
                         "Please, check google drive token");
             }
-            log.info("File was send");
+            log.info("file has been sent");
             return googleFile;
         }
         return null;

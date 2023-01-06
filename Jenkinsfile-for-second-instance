@@ -11,6 +11,7 @@ pipeline {
         AWS_SQS_URI="${AWS_SQS_URI}"
         MAIL_USER_NAME="${MAIL_USER_NAME}"
         MAIL_PASSWORD="${MAIL_PASSWORD}"
+        OLX_TOKEN="${OLX_TOKEN}"
     }
     tools {
     maven 'MAVEN'

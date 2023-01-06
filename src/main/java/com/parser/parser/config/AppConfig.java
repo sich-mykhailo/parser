@@ -5,8 +5,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 
 @Configuration
 public class AppConfig {
@@ -16,11 +16,12 @@ public class AppConfig {
         return new RestTemplate();
     }
 
-
-    //TODO change it
     @PostConstruct
     public void createSheet() {
-        Workbook workbook = new XSSFWorkbook();
-        workbook.createSheet("newList");
+        try (Workbook workbook = new XSSFWorkbook()) {
+            workbook.createSheet("newList");
+        } catch (IOException e) {
+            throw new RuntimeException("Can't create new sheet", e);
+        }
     }
 }

@@ -20,14 +20,15 @@ public class PageDtoMapper implements RequestDtoMapper<PageRequestDto, Page>,
         page.setUrl(Objects.nonNull(dto.getUrl()) ? dto.getUrl() : "-");
         page.setViews(ParserUtils.mapToNumbers(dto.getViews()));
         page.setTitle(Objects.nonNull(dto.getTitle()) ? dto.getTitle() : "-");
-        //page.setRegistrationDate(Objects.nonNull(dto.getDate()) ? buildDate(dto.getDate()) : "-");
+        page.setRegistrationDate(Objects.nonNull(dto.getDate()) ? buildDate(dto.getDate()) : "-");
         page.setPrice(ParserUtils.mapToNumbers(dto.getPrice()));
-       // page.setStartOfWork(Objects.nonNull(dto.getStartOfWork()) ? buildDate(dto.getStartOfWork().substring(13)) : "-");
+        page.setStartOfWork(Objects.nonNull(dto.getStartOfWork()) ? buildDate(dto.getStartOfWork().substring(13)) : "-");
         page.setOblast(Objects.nonNull(dto.getOblast()) && dto.getOblast().contains("-") ? dto.getOblast().split("-")[1] : "-");
         page.setCity(Objects.nonNull(dto.getCity()) && dto.getCity().contains("-") ? dto.getCity().split("-")[1] : "-");
-        page.setDateOfPublication(Objects.nonNull(dto.getDateOfPublication()) ? buildDate(dto.getDateOfPublication().substring(13)) : "-");
+        page.setDateOfPublication(Objects.nonNull(dto.getDateOfPublication()) && dto.getDateOfPublication().length() >= 13
+                ? buildDate(dto.getDateOfPublication().substring(13)) : "-");
         page.setIndividual(Objects.nonNull(dto.getIndividual()) ? dto.getIndividual() : "-");
-      //  page.setIsTop(dto.getIsTop() ? "ТОП" : "НЕ ТОП");
+        page.setIsTop(dto.getIsTop() ? "ТОП" : "НЕ ТОП");
         page.setOlxDelivery(dto.isOlxDelivery() ? 1 : 0);
         page.setState(Objects.nonNull(dto.getState()) && dto.getState().contains(":") ? dto.getState().split(":")[1] : "-");
         page.setTitleForTable(Objects.nonNull(dto.getTitleForTable()) ? dto.getTitleForTable() : "-");
