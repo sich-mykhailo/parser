@@ -1,9 +1,5 @@
 package com.parser.parser.utils;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Constants {
     public static final String GMAIL_TOKEN_URL = "https://oauth2.googleapis.com/token";
     public static final String CURRENT_USER_ID = "me";

@@ -1,8 +1,5 @@
 package com.parser.parser.utils;
 
-import lombok.Data;
-
-@Data
 public class HtmlClassNames {
     public static final String PRICE = "css-19cr6mc-TextStyled er34gjf0";
     public static final String ID = "css-xtucvg-TextStyled er34gjf0";
@@ -21,5 +18,4 @@ public class HtmlClassNames {
     public static final String STATE = "css-65jx20-TextStyled er34gjf0";
     public static final String DELIVERY = "css-x30oa2-Text eu5v0x0";
     public static final String OBJAST = "css-tyi2d1";
-
 }

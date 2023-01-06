@@ -6,7 +6,10 @@ import com.parser.parser.service.mapper.PageDtoMapper;
 import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
 import com.parser.parser.utils.ParserUtils;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.log4j.Log4j2;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -28,16 +31,17 @@ import static com.parser.parser.utils.HtmlClassNames.*;
 @Log4j2
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ParserServiceImpl implements ParserService {
-    private static final String TITLE_TAG = "title";
-    private static final String STATE = "Стан:";
-    private static final String OLX_PAGE_VIEWS_URL = "https://www.olx.ua/api/v1/offers/%s/page-views/";
-    private static final String DEFAULT_PAGE_VIEWS = "0";
+    static String TITLE_TAG = "title";
+    static String STATE = "Стан:";
+    static String OLX_PAGE_VIEWS_URL = "https://www.olx.ua/api/v1/offers/%s/page-views/";
+    static String DEFAULT_PAGE_VIEWS = "0";
 
     @Value("${olx.token}")
-    private String olxToken;
-    private final RestTemplate restTemplate;
-    private final PageDtoMapper pageDtoMapper;
+    @NonFinal String olxToken;
+    RestTemplate restTemplate;
+    PageDtoMapper pageDtoMapper;
 
     @Override
     public List<Page> getAllItems(List<PageRequestDto> pages) {

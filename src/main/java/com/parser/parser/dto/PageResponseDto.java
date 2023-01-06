@@ -1,15 +1,22 @@
 package com.parser.parser.dto;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PageResponseDto {
-    private Long id;
-    private String url;
-    private String title;
-    private Integer price;
-    private String date;
-    private Integer views;
-    private String startOfWork;
-    private String oblast;
+    Long id;
+    String url;
+    String title;
+    Integer price;
+    String date;
+    Integer views;
+    String startOfWork;
+    String oblast;
 }

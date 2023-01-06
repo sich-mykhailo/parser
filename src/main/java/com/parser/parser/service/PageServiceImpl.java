@@ -5,7 +5,9 @@ import com.parser.parser.entity.Page;
 import com.parser.parser.utils.Constants;
 import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,16 +21,17 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class PageServiceImpl implements PageService {
-    private static final int FIRST_PAGE_NUMBER = 0;
-    private static final String ATTRIBUTE_CLASS = "class";
-    private static final String ATTRIBUTE_ALT = "alt";
-    private static final String PAGE_CONNECTOR = "?page=";
+    static int FIRST_PAGE_NUMBER = 0;
+    static String ATTRIBUTE_CLASS = "class";
+    static String ATTRIBUTE_ALT = "alt";
+    static String PAGE_CONNECTOR = "?page=";
 
-    private final FileService writeToFileService;
-    private final Workbook workbook = new XSSFWorkbook();
-    private final Sheet sheet = workbook.createSheet("newList");
-    private final ParserService parserService;
+    FileService writeToFileService;
+    Workbook workbook = new XSSFWorkbook();
+    Sheet sheet = workbook.createSheet("newList");
+    ParserService parserService;
 
     public List<PageRequestDto> getAllItemsFromMainUrl(String mainUrl) {
         int olxPage = FIRST_PAGE_NUMBER;

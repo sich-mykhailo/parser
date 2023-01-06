@@ -4,7 +4,10 @@ import com.google.api.services.drive.model.File;
 import com.parser.parser.google.drive.GoogleDriveService;
 import com.parser.parser.service.PageService;
 import com.parser.parser.utils.Constants;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.cloud.aws.messaging.listener.Acknowledgment;
@@ -26,13 +29,14 @@ import static com.parser.parser.utils.Constants.*;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class SqsServiceImpl implements SqsService {
-    private final PageService pageService;
-    private final GoogleDriveService googleDriveService;
-    private final RestTemplate restTemplate;
+    PageService pageService;
+    GoogleDriveService googleDriveService;
+    RestTemplate restTemplate;
     @Value("${cloud.aws.end-point.uri}")
-    private String endPoint;
-    private final QueueMessagingTemplate sqs;
+    @NonFinal String endPoint;
+    QueueMessagingTemplate sqs;
 
     public void putMessageInQueue(String payload, String userEmail, String userId, String input) {
         Message<String> msg = MessageBuilder.withPayload(payload)

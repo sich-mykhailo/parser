@@ -1,8 +1,13 @@
 package com.parser.parser.entity;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Url {
-    private String url;
+    String url;
 }

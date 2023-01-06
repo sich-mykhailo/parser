@@ -11,7 +11,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.parser.parser.utils.Constants;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,20 +31,21 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class GoogleProvider {
     @Value("#{'${integration.email.scope.drive}'.split(',')}")
-    private List<String> scopes;
+    List<String> scopes;
     @Value("#{'${integration.google.credentials}'}")
-    private String credentials;
+    String credentials;
     @Value("#{'${integration.google.secret}'}")
-    private String secret;
+    String secret;
     @Value("#{'${integration.google.client.id}'}")
-    private String clientId;
+    String clientId;
     @Value("#{'${integration.google.refresh-token}'}")
-    private String refreshToken;
-    private NetHttpTransport httpTransport;
-    private JsonFactory jsonFactory;
-    private GoogleAuthorizationCodeFlow flow;
+    String refreshToken;
+    NetHttpTransport httpTransport;
+    JsonFactory jsonFactory;
+    GoogleAuthorizationCodeFlow flow;
 
     @PostConstruct
     void init() {

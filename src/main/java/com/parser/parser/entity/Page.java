@@ -1,30 +1,34 @@
 package com.parser.parser.entity;
 
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+
 import java.util.Objects;
 
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Page {
-    private Long id;
-    private String url;
-    private String title;
-    private Integer price;
-    private String registrationDate;
-    private Integer views;
-    private String orderId;
-    private String startOfWork;
-    private String oblast;
-    private String section;
-    private String city;
-    private String dateOfPublication;
-    private String titleForTable;
-    private String isTop;
-    private String individual;
-    private String state;
-    private Integer olxDelivery;
+     Long id;
+     String url;
+     String title;
+     Integer price;
+     String registrationDate;
+     Integer views;
+     String orderId;
+     String startOfWork;
+     String oblast;
+     String section;
+     String city;
+     String dateOfPublication;
+     String titleForTable;
+     String isTop;
+     String individual;
+     String state;
+     Integer olxDelivery;
 
     @Override
     public boolean equals(Object o) {

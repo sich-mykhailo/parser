@@ -12,7 +12,10 @@ import com.google.api.services.drive.model.Permission;
 import com.parser.parser.google.GoogleProvider;
 import com.parser.parser.notifications.EmailService;
 import com.parser.parser.utils.Constants;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,18 +26,19 @@ import java.time.LocalDateTime;
 @Log4j2
 @Component
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class GoogleDriveService {
-    private final GoogleProvider googleProvider;
-    private final EmailService emailService;
+    GoogleProvider googleProvider;
+    EmailService emailService;
     @Value("${notification.email.admin}")
-    private String adminEmail;
+    @NonFinal String adminEmail;
 
     public String getGoogleFileUrl(File file) {
         return Constants.GOOGLE_FILE_URL + file.getId();
     }
 
     public File sendFile(String userEmail) {
-        if(googleProvider.getDriveService() != null) {
+        if (googleProvider.getDriveService() != null) {
             Drive driveService = googleProvider.getDriveService();
             File googleFile = null;
 
