@@ -10,7 +10,7 @@ public final class Constants {
     public static final String LOCAL_FILE_PATH = "src/main/resources/excels/newFile.xlsx";
     public static final String GOOGLE_FILE_URL = "https://docs.google.com/spreadsheets/d/";
     public static final String XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    public static final int NUMBER_OF_OLX_PAGES = 2;
+    public static final int NUMBER_OF_OLX_PAGES = 24;
 
     /** AWS */
     public static final String QUEUE_NAME = "report-queue";
