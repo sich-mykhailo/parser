@@ -17,7 +17,7 @@ public class JsoupConnection {
             connection.header("headersecurity", "xyz123");
             return connection.get();
         } catch (Exception e) {
-            log.warn("URL data incorrect!");
+            log.warn("URL data incorrect! Url: " + url);
         }
         return null;
     }
