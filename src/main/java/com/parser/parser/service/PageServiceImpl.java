@@ -3,7 +3,7 @@ package com.parser.parser.service;
 import com.parser.parser.dto.PageRequestDto;
 import com.parser.parser.entity.Page;
 import com.parser.parser.utils.Constants;
-import com.parser.parser.utils.HtmlNames;
+import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -39,9 +39,9 @@ public class PageServiceImpl implements PageService {
             Document doc = JsoupConnection.createConnection(completePage);
             log.info("page number:" + olxPage);
             if (Objects.nonNull(doc) && olxPage < 2) {
-                Elements elements = doc.getElementsByAttributeValue(ATTRIBUTE_CLASS, HtmlNames.FIST_PAGE_CLASS_NAME);
+                Elements elements = doc.getElementsByAttributeValue(ATTRIBUTE_CLASS, HtmlClassNames.FIST_PAGE_CLASS_NAME);
                 for (Element element : elements) {
-                    String localUrl = element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
+                    String localUrl = element.attributes().get(HtmlClassNames.URL_ATTRIBUTE_NAME);
                     String title = Objects.requireNonNull(element.children().first()).attributes().get(ATTRIBUTE_ALT);
                     PageRequestDto itemRequestDto = new PageRequestDto();
                     itemRequestDto.setUrl(localUrl);
@@ -51,9 +51,9 @@ public class PageServiceImpl implements PageService {
                     items.add(itemRequestDto);
                 }
             } else if (Objects.nonNull(doc)) {
-                Elements elements = doc.getElementsByClass(HtmlNames.CLASS_NAME);
+                Elements elements = doc.getElementsByClass(HtmlClassNames.CLASS_NAME);
                 for (Element element : elements) {
-                    String pageUrl = HtmlNames.OLX_BASE + element.attributes().get(HtmlNames.URL_ATTRIBUTE_NAME);
+                    String pageUrl = HtmlClassNames.OLX_BASE + element.attributes().get(HtmlClassNames.URL_ATTRIBUTE_NAME);
                     PageRequestDto pageRequestDto = new PageRequestDto();
                     pageRequestDto.setUrl(pageUrl);
                     pageRequestDto.setOlxDelivery(element.getElementsByClass("css-10arydl").size() != 0);

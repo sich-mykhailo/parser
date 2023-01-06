@@ -3,8 +3,7 @@ package com.parser.parser.service;
 import com.parser.parser.dto.PageRequestDto;
 import com.parser.parser.entity.Page;
 import com.parser.parser.service.mapper.PageDtoMapper;
-import com.parser.parser.utils.Constants;
-import com.parser.parser.utils.HtmlNames;
+import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
 import com.parser.parser.utils.ParserUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +16,24 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+
+import static com.google.common.net.HttpHeaders.KEEP_ALIVE;
+import static com.parser.parser.utils.HtmlClassNames.*;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class ParserServiceImpl implements ParserService {
+    private static final String TITLE_TAG = "title";
+    private static final String STATE = "Стан:";
+    private static final String OLX_PAGE_VIEWS_URL = "https://www.olx.ua/api/v1/offers/%s/page-views/";
+    private static final String DEFAULT_PAGE_VIEWS = "0";
+
     @Value("${olx.token}")
     private String olxToken;
     private final RestTemplate restTemplate;
@@ -38,16 +47,16 @@ public class ParserServiceImpl implements ParserService {
         for (PageRequestDto item : pages) {
             if (Objects.nonNull(item.getUrl())) {
                 PageRequestDto itemRequestDto = itemParse(item.getUrl());
-                    if (Objects.nonNull(item.getTitle())) {
-                        itemRequestDto.setTitle(item.getTitle());
-                    }
-                    itemRequestDto.setUrl(item.getUrl());
-                    itemRequestDto.setIsTop(item.getIsTop());
-                    itemRequestDto.setOlxDelivery(item.isOlxDelivery());
-                    Page completeItem = pageDtoMapper.mapToModel(itemRequestDto);
-                    completeItem.setId(count++);
-                    completeItems.add(completeItem);
+                if (Objects.nonNull(item.getTitle())) {
+                    itemRequestDto.setTitle(item.getTitle());
                 }
+                itemRequestDto.setUrl(item.getUrl());
+                itemRequestDto.setIsTop(item.getIsTop());
+                itemRequestDto.setOlxDelivery(item.isOlxDelivery());
+                Page completeItem = pageDtoMapper.mapToModel(itemRequestDto);
+                completeItem.setId(count++);
+                completeItems.add(completeItem);
+            }
             if (completeItems.size() % 100 == 0) {
                 log.info("completed items: " + completeItems.size());
             }
@@ -59,22 +68,41 @@ public class ParserServiceImpl implements ParserService {
         PageRequestDto itemRequestDto = new PageRequestDto();
         try {
             Document doc = JsoupConnection.createConnection(itemUrl);
-            if (doc != null) {
-                String id = doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0").size() != 0
-                        ? doc.getElementsByClass("css-xtucvg-TextStyled er34gjf0").text() : "-1";
+            if (Objects.nonNull(doc)) {
+                String id = doc.getElementsByClass(HtmlClassNames.ID).size() != 0
+                        ? doc.getElementsByClass(ID).text() : "";
+
                 itemRequestDto.setViews(getViews(ParserUtils.mapToNumbers(id).toString()));
-                itemRequestDto.setTitle(doc.getElementsByTag("title").first().text());
-                itemRequestDto.setPrice(doc.getElementsByClass(HtmlNames.PRICE).text());
-                itemRequestDto.setDate(doc.getElementsByClass(HtmlNames.DATE).text());
-                itemRequestDto.setOblast(doc.getElementsByClass("css-tyi2d1").text());
-                itemRequestDto.setStartOfWork(doc.getElementsByClass(HtmlNames.START_OF_WORK).first().text());
-                itemRequestDto.setSection(doc.getElementsByClass("css-tyi2d1").get(1).text());
-                itemRequestDto.setDateOfPublication(Objects.nonNull(doc.getElementsByClass("css-sg1fy9").first()) ?
-                        doc.getElementsByClass("css-sg1fy9").first().text() : "-");
-                itemRequestDto.setTitleForTable(doc.getElementsByClass("css-sg1fy9").get(1).text());
-                itemRequestDto.setIndividual(doc.getElementsByClass("css-65jx20-TextStyled er34gjf0").first().text());
-                handleListData(doc.getElementsByClass("css-65jx20-TextStyled er34gjf0"), itemRequestDto);
-                Elements deliveryElement = doc.getElementsByClass("css-x30oa2-Text eu5v0x0");
+
+                Optional.ofNullable(doc.getElementsByTag(TITLE_TAG).first())
+                        .ifPresent(e -> itemRequestDto.setTitle(e.text()));
+
+                Optional.of(doc.getElementsByClass(PRICE))
+                        .ifPresent(e -> itemRequestDto.setPrice(e.text()));
+
+                Optional.of(doc.getElementsByClass(DATE))
+                        .ifPresent(e -> itemRequestDto.setDate(e.text()));
+
+                Optional.of(doc.getElementsByClass(OBJAST))
+                        .ifPresent(e -> itemRequestDto.setOblast(e.text()));
+
+                Optional.ofNullable(doc.getElementsByClass(START_OF_WORK).first())
+                        .ifPresent(e -> itemRequestDto.setStartOfWork(e.text()));
+
+                itemRequestDto.setSection(doc.getElementsByClass(SECTION).size() != 0
+                        ? doc.getElementsByClass(SECTION).get(1).text() : "");
+
+                Optional.ofNullable(doc.getElementsByClass(DATE_OF_PUBLICATION).first())
+                        .ifPresent(e -> itemRequestDto.setDateOfPublication(e.text()));
+
+                itemRequestDto.setTitleForTable(doc.getElementsByClass(TITLE_FOR_TABLE).size() != 0
+                        ? doc.getElementsByClass(TITLE_FOR_TABLE).get(1).text() : "");
+
+                Optional.ofNullable(doc.getElementsByClass(INDIVIDUAL).first())
+                        .ifPresent(e -> itemRequestDto.setIndividual(e.text()));
+
+                handleListData(doc.getElementsByClass(STATE), itemRequestDto);
+                Elements deliveryElement = doc.getElementsByClass(DELIVERY);
                 itemRequestDto.setOlxDelivery(deliveryElement.size() != 0);
             }
         } catch (Exception e) {
@@ -86,28 +114,26 @@ public class ParserServiceImpl implements ParserService {
 
     private void handleListData(Elements elements, PageRequestDto pageRequestDto) {
         elements.forEach(element -> {
-            if (element.text().contains("Стан:")) {
+            if (element.text().contains(STATE)) {
                 pageRequestDto.setState(element.text());
             }
         });
     }
 
     private String getViews(String advertisementId) {
-        String wUrl = "https://www.olx.ua/api/v1/offers/"
-                + advertisementId
-                + "/page-views/";
+        String wUrl = String.format(OLX_PAGE_VIEWS_URL, advertisementId);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", olxToken);
-        httpHeaders.setConnection("keep-alive");
+        httpHeaders.setBearerAuth(olxToken);
+        httpHeaders.setConnection(KEEP_ALIVE);
         httpHeaders.setContentType(MediaType.APPLICATION_XML);
         HttpEntity<String> request = new HttpEntity<>("", httpHeaders);
-        String s;
+        String response;
         try {
-            s = restTemplate.postForObject(wUrl, request, String.class);
+            response = restTemplate.postForObject(wUrl, request, String.class);
         } catch (Exception e) {
-            log.warn("Can't get page-views for url: " + wUrl);
-            return "0";
+            log.warn("Can't get page views for url: " + wUrl, e);
+            return DEFAULT_PAGE_VIEWS;
         }
-        return s;
+        return response;
     }
 }
