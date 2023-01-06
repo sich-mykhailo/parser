@@ -50,23 +50,26 @@ public class PageDtoMapper implements RequestDtoMapper<PageRequestDto, Page>,
     }
 
     private String buildDate(String date) {
-        String currentDate = LocalDate.now().toString();
-        if (!date.contains("Сьогодні")) {
-            String year;
-            String day = date.startsWith("0")
-                    || date.startsWith("1")
-                    || date.startsWith("2")
-                    || date.startsWith("3")
-                    ? date.substring(0, 2) : "00";
-            String month = buildMonth(date);
-            if (day.equals("00")) {
-                year = date.substring(date.length() - 4);
-                return year + "-" + month;
+        if (date != null && !date.isEmpty()) {
+            String currentDate = LocalDate.now().toString();
+            if (!date.contains("Сьогодні")) {
+                String year;
+                String day = date.startsWith("0")
+                        || date.startsWith("1")
+                        || date.startsWith("2")
+                        || date.startsWith("3")
+                        ? date.substring(0, 2) : "00";
+                String month = buildMonth(date);
+                if (day.equals("00")) {
+                    year = date.substring(date.length() - 4);
+                    return year + "-" + month;
+                }
+                year = date.substring(date.length() - 7, date.length() - 3);
+                return year + "-" + month + "-" + day;
             }
-            year = date.substring(date.length() - 7, date.length() - 3);
-            return year + "-" + month + "-" + day;
+            return currentDate;
         }
-        return currentDate;
+        return "-1";
     }
 
     private String buildMonth(String date) {
