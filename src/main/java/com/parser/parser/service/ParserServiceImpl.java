@@ -2,7 +2,7 @@ package com.parser.parser.service;
 
 import com.parser.parser.dto.PageRequestDto;
 import com.parser.parser.entity.Page;
-import com.parser.parser.service.mapper.PageDtoMapper;
+import com.parser.parser.service.mapper.PageMapper;
 import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
 import com.parser.parser.utils.ParserUtils;
@@ -41,7 +41,7 @@ public class ParserServiceImpl implements ParserService {
     @Value("${olx.token}")
     @NonFinal String olxToken;
     RestTemplate restTemplate;
-    PageDtoMapper pageDtoMapper;
+    PageMapper pageMapper;
 
     @Override
     public List<Page> getAllItems(List<PageRequestDto> pages) {
@@ -57,7 +57,7 @@ public class ParserServiceImpl implements ParserService {
                 itemRequestDto.setUrl(item.getUrl());
                 itemRequestDto.setIsTop(item.getIsTop());
                 itemRequestDto.setOlxDelivery(item.isOlxDelivery());
-                Page completeItem = pageDtoMapper.mapToModel(itemRequestDto);
+                Page completeItem = pageMapper.mapToModel(itemRequestDto);
                 completeItem.setId(count++);
                 completeItems.add(completeItem);
             }

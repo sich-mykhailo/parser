@@ -1,7 +1,6 @@
 package com.parser.parser.service.mapper;
 
 import com.parser.parser.dto.PageRequestDto;
-import com.parser.parser.dto.PageResponseDto;
 import com.parser.parser.entity.Page;
 import com.parser.parser.utils.ParserUtils;
 import lombok.extern.log4j.Log4j2;
@@ -11,8 +10,7 @@ import java.util.Objects;
 
 @Component
 @Log4j2
-public class PageDtoMapper implements RequestDtoMapper<PageRequestDto, Page>,
-        ResponseDtoMapper<PageResponseDto, Page> {
+public class PageMapper implements RequestDtoMapper<PageRequestDto, Page> {
 
     @Override
     public Page mapToModel(PageRequestDto dto) {
@@ -34,19 +32,6 @@ public class PageDtoMapper implements RequestDtoMapper<PageRequestDto, Page>,
         page.setTitleForTable(Objects.nonNull(dto.getTitleForTable()) ? dto.getTitleForTable() : "-");
         page.setSection(Objects.nonNull(dto.getSection()) ? dto.getSection() : "-");
         return page;
-    }
-
-    @Override
-    public PageResponseDto mapToDto(Page article) {
-        PageResponseDto pageResponseDto = new PageResponseDto();
-        pageResponseDto.setId(article.getId());
-        pageResponseDto.setViews(article.getViews());
-        pageResponseDto.setDate(article.getRegistrationDate());
-        pageResponseDto.setUrl(article.getUrl());
-        pageResponseDto.setTitle(article.getTitle());
-        pageResponseDto.setStartOfWork(article.getStartOfWork());
-        pageResponseDto.setOblast(article.getOblast());
-        return pageResponseDto;
     }
 
     private String buildDate(String date) {
