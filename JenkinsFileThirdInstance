@@ -30,7 +30,7 @@ pipeline {
              steps {
                sh 'echo "build.."'
                sh '${CONNECT_TO_REMOTE_SERVER} \
-                   docker build ${GIT_PARSER_REPO} -t parser:{INSTANCE_NUMBER}'
+                   docker build ${GIT_PARSER_REPO} -t parser:${INSTANCE_NUMBER}'
              }
        }
 
