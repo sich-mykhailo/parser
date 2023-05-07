@@ -22,7 +22,7 @@ pipeline {
             steps {
               sh '${CONNECT_TO_REMOTE_SERVER} docker stop parser-${INSTANCE_NUMBER} || true'
               sh '${CONNECT_TO_REMOTE_SERVER} docker rm parser-${INSTANCE_NUMBER} || true'
-              sh '${CONNECT_TO_REMOTE_SERVER} docker rmi parser-${INSTANCE_NUMBER} || true'
+              sh '${CONNECT_TO_REMOTE_SERVER} docker rmi parser:${INSTANCE_NUMBER} || true'
             }
         }
 
