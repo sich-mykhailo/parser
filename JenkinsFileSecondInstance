@@ -41,14 +41,14 @@ pipeline {
                  docker run -e AWS_ACCESS_KEY=${AWS_ACCESS_KEY} \
                                  -e AWS_SECRET_KEY=${AWS_SECRET_KEY} \
                                  -e AWS_SQS_URI=${AWS_SQS_URI} \
-                                 -e GOOGLE_DRIVE_CLIENT_ID=${GOOGLE_DRIVE_CLIENT_ID}
-                                 -e GOOGLE_DRIVE_REFRESH_TOKEN=${GOOGLE_DRIVE_REFRESH_TOKEN}
-                                 -e GOOGLE_DRIVE_SECRET=${GOOGLE_DRIVE_SECRET}
+                                 -e GOOGLE_DRIVE_CLIENT_ID=${GOOGLE_DRIVE_CLIENT_ID} \
+                                 -e GOOGLE_DRIVE_REFRESH_TOKEN=${GOOGLE_DRIVE_REFRESH_TOKEN} \
+                                 -e GOOGLE_DRIVE_SECRET=${GOOGLE_DRIVE_SECRET} \
                                  -e MAIL_PASSWORD=${MAIL_PASSWORD} \
                                  -e MAIL_USER_NAME=${MAIL_USER_NAME} \
                                  -e MAX_OLX_PAGES=${MAX_OLX_PAGES}
-                                 -e OLX_TOKEN=${OLX_TOKEN}
-                                 -e PARSER_ADMIN_EMAIL=${PARSER_ADMIN_EMAIL}
+                                 -e OLX_TOKEN=${OLX_TOKEN} \
+                                 -e PARSER_ADMIN_EMAIL=${PARSER_ADMIN_EMAIL} \
                                  -e TELEGRAM_HELP_EMAIL=${TELEGRAM_HELP_EMAIL} -d --name parser-${INSTANCE_NUMBER} -p ${PORT}:${PORT} parser:${INSTANCE_NUMBER}'
              }
            }
