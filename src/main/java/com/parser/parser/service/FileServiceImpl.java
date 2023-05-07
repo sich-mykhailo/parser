@@ -1,6 +1,6 @@
 package com.parser.parser.service;
 
-import com.parser.parser.entity.Page;
+import com.parser.parser.dto.Page;
 import com.parser.parser.service.excel.ExcelFileWriter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

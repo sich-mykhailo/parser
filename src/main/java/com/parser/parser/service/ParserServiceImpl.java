@@ -1,7 +1,6 @@
 package com.parser.parser.service;
 
-import com.parser.parser.dto.PageRequestDto;
-import com.parser.parser.entity.Page;
+import com.parser.parser.dto.Page;
 import com.parser.parser.service.mapper.PageMapper;
 import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
@@ -18,6 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -44,20 +44,20 @@ public class ParserServiceImpl implements ParserService {
     PageMapper pageMapper;
 
     @Override
-    public List<Page> getAllItems(List<PageRequestDto> pages) {
+    public List<Page> getAllItems(List<Page> pages) {
         long count = 1L;
         List<Page> completeItems = new ArrayList<>();
         log.info("total size of items: " + pages.size());
-        for (PageRequestDto item : pages) {
+        for (Page item : pages) {
             if (Objects.nonNull(item.getUrl())) {
-                PageRequestDto itemRequestDto = itemParse(item.getUrl());
+                Page dto = itemParse(item.getUrl());
                 if (Objects.nonNull(item.getTitle())) {
-                    itemRequestDto.setTitle(item.getTitle());
+                    dto.setTitle(item.getTitle());
                 }
-                itemRequestDto.setUrl(item.getUrl());
-                itemRequestDto.setIsTop(item.getIsTop());
-                itemRequestDto.setOlxDelivery(item.isOlxDelivery());
-                Page completeItem = pageMapper.mapToModel(itemRequestDto);
+                dto.setUrl(item.getUrl());
+                dto.setTop(item.getTop());
+                dto.setOlxDelivery(item.getOlxDelivery());
+                Page completeItem = pageMapper.map(dto);
                 completeItem.setId(count++);
                 completeItems.add(completeItem);
             }
@@ -68,12 +68,12 @@ public class ParserServiceImpl implements ParserService {
         return completeItems;
     }
 
-    private PageRequestDto itemParse(String itemUrl) {
-        PageRequestDto itemRequestDto = new PageRequestDto();
+    private Page itemParse(String itemUrl) {
+        Page itemRequestDto = new Page();
         try {
             Document doc = JsoupConnection.createConnection(itemUrl);
             if (Objects.nonNull(doc)) {
-                String id = doc.getElementsByClass(HtmlClassNames.ID).size() != 0
+                String id = doc.getElementsByClass(ID).size() != 0
                         ? doc.getElementsByClass(ID).text() : "";
 
                 itemRequestDto.setViews(getViews(ParserUtils.mapToNumbers(id).toString()));
@@ -85,9 +85,9 @@ public class ParserServiceImpl implements ParserService {
                         .ifPresent(e -> itemRequestDto.setPrice(e.text()));
 
                 Optional.of(doc.getElementsByClass(DATE))
-                        .ifPresent(e -> itemRequestDto.setDate(e.text()));
+                        .ifPresent(e -> itemRequestDto.setRegistrationDate(e.text()));
 
-                Optional.of(doc.getElementsByClass(OBJAST))
+                Optional.of(doc.getElementsByClass(FACILITY))
                         .ifPresent(e -> itemRequestDto.setOblast(e.text()));
 
                 Optional.ofNullable(doc.getElementsByClass(START_OF_WORK).first())
@@ -99,27 +99,23 @@ public class ParserServiceImpl implements ParserService {
                 Optional.ofNullable(doc.getElementsByClass(DATE_OF_PUBLICATION).first())
                         .ifPresent(e -> itemRequestDto.setDateOfPublication(e.text()));
 
-                itemRequestDto.setTitleForTable(doc.getElementsByClass(TITLE_FOR_TABLE).size() != 0
-                        ? doc.getElementsByClass(TITLE_FOR_TABLE).get(1).text() : "");
-
                 Optional.ofNullable(doc.getElementsByClass(INDIVIDUAL).first())
                         .ifPresent(e -> itemRequestDto.setIndividual(e.text()));
 
-                handleListData(doc.getElementsByClass(STATE), itemRequestDto);
+                handleListData(doc.getElementsByClass(HtmlClassNames.STATE), itemRequestDto);
                 Elements deliveryElement = doc.getElementsByClass(DELIVERY);
-                itemRequestDto.setOlxDelivery(deliveryElement.size() != 0);
+                itemRequestDto.setOlxDelivery(deliveryElement.size() != 0 ? "Є" : "НЕМА");
             }
         } catch (Exception e) {
             log.warn("Can't get item url: " + itemUrl, e);
-            return itemRequestDto;
         }
         return itemRequestDto;
     }
 
-    private void handleListData(Elements elements, PageRequestDto pageRequestDto) {
+    private void handleListData(Elements elements, Page dto) {
         elements.forEach(element -> {
             if (element.text().contains(STATE)) {
-                pageRequestDto.setState(element.text());
+                dto.setState(element.text());
             }
         });
     }
@@ -134,8 +130,11 @@ public class ParserServiceImpl implements ParserService {
         String response;
         try {
             response = restTemplate.postForObject(wUrl, request, String.class);
-        } catch (Exception e) {
-            log.warn("Can't get page views for url: " + wUrl, e);
+        } catch (HttpClientErrorException e) {
+            log.warn("Can't get page views for url: "
+                    + wUrl
+                    + " OLX token has been expired");
+
             return DEFAULT_PAGE_VIEWS;
         }
         return response;

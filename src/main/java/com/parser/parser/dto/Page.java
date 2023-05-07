@@ -1,5 +1,4 @@
-package com.parser.parser.entity;
-
+package com.parser.parser.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,24 +10,22 @@ import java.util.Objects;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Page {
+public class    Page {
      Long id;
      String url;
      String title;
-     Integer price;
+     String price;
      String registrationDate;
-     Integer views;
+     String views;
      String orderId;
      String startOfWork;
      String oblast;
      String section;
-     String city;
      String dateOfPublication;
-     String titleForTable;
-     String isTop;
+     String top;
      String individual;
      String state;
-     Integer olxDelivery;
+     String olxDelivery;
 
     @Override
     public boolean equals(Object o) {

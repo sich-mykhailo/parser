@@ -1,39 +1,42 @@
 package com.parser.parser.service.mapper;
 
-import com.parser.parser.dto.PageRequestDto;
-import com.parser.parser.entity.Page;
+import com.parser.parser.dto.Page;
 import com.parser.parser.utils.ParserUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @Log4j2
-public class PageMapper implements RequestDtoMapper<PageRequestDto, Page> {
+public class PageMapper {
 
-    @Override
-    public Page mapToModel(PageRequestDto dto) {
-        Page page = new com.parser.parser.entity.Page();
+    public Page map(Page dto) {
+        Page page = new Page();
         page.setUrl(Objects.nonNull(dto.getUrl()) ? dto.getUrl() : "-");
-        page.setViews(ParserUtils.mapToNumbers(dto.getViews()));
+        page.setViews(ParserUtils.mapToNumbers(dto.getViews()).toString());
         page.setTitle(Objects.nonNull(dto.getTitle()) ? dto.getTitle() : "-");
-        page.setRegistrationDate(Objects.nonNull(dto.getDate()) ? buildDate(dto.getDate()) : "-");
-        page.setPrice(ParserUtils.mapToNumbers(dto.getPrice()));
+        page.setRegistrationDate(Objects.nonNull(dto.getRegistrationDate()) ? buildDate(dto.getRegistrationDate()) : "-");
+        page.setPrice(ParserUtils.mapToNumbers(dto.getPrice()).toString());
         page.setStartOfWork(Objects.nonNull(dto.getStartOfWork()) ? buildDate(dto.getStartOfWork().substring(13)) : "-");
-        page.setOblast(Objects.nonNull(dto.getOblast()) && dto.getOblast().contains("-") ? dto.getOblast().split("-")[1] : "-");
-        page.setCity(Objects.nonNull(dto.getCity()) && dto.getCity().contains("-") ? dto.getCity().split("-")[1] : "-");
+        page.setOblast(handleOblast(dto));
         page.setDateOfPublication(Objects.nonNull(dto.getDateOfPublication()) && dto.getDateOfPublication().length() >= 13
                 ? buildDate(dto.getDateOfPublication().substring(13)) : "-");
         page.setIndividual(Objects.nonNull(dto.getIndividual()) ? dto.getIndividual() : "-");
-        page.setIsTop(dto.getIsTop() ? "ТОП" : "НЕ ТОП");
-        page.setOlxDelivery(dto.isOlxDelivery() ? 1 : 0);
+        page.setTop(dto.getTop());
+        page.setOlxDelivery(dto.getOlxDelivery());
         page.setState(Objects.nonNull(dto.getState()) && dto.getState().contains(":") ? dto.getState().split(":")[1] : "-");
-        page.setTitleForTable(Objects.nonNull(dto.getTitleForTable()) ? dto.getTitleForTable() : "-");
         page.setSection(Objects.nonNull(dto.getSection()) ? dto.getSection() : "-");
         return page;
     }
 
+    private String handleOblast(Page dto) {
+        if(Objects.nonNull(dto.getOblast()) && dto.getOblast().contains("-")) {
+            String result = dto.getOblast().split("-")[1];
+           return result.contains("Івано") ? "Івано-Франківська область" : result;
+        }
+        return "-";
+    }
     private String buildDate(String date) {
         if (date != null && !date.isEmpty()) {
             String currentDate = LocalDate.now().toString();
