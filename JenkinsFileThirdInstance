@@ -45,7 +45,7 @@ pipeline {
                                  -e GOOGLE_DRIVE_SECRET=${GOOGLE_DRIVE_SECRET} \
                                  -e MAIL_PASSWORD=${MAIL_PASSWORD} \
                                  -e MAIL_USER_NAME=${MAIL_USER_NAME} \
-                                 -e MAX_OLX_PAGES=${MAX_OLX_PAGES}
+                                 -e MAX_OLX_PAGES=${MAX_OLX_PAGES} \
                                  -e OLX_TOKEN=${OLX_TOKEN} \
                                  -e PARSER_ADMIN_EMAIL=${PARSER_ADMIN_EMAIL} \
                                  -e TELEGRAM_HELP_EMAIL=${TELEGRAM_HELP_EMAIL} -d --name parser-${INSTANCE_NUMBER} -p ${PORT}:${PORT} parser:${INSTANCE_NUMBER}'
