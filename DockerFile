@@ -4,7 +4,5 @@ RUN mvn clean package
 
 FROM amazoncorretto:17-alpine-jdk
 RUN apk update
-RUN apk add --no-cache curl
 COPY --from=build ./target/parser-SNAPSHOT.jar ./parser-SNAPSHOT.jar
-EXPOSE 8080
 ENTRYPOINT ["java","-jar","./parser-SNAPSHOT.jar"]
