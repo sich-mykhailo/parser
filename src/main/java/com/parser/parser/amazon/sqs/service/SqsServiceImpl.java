@@ -54,9 +54,8 @@ public class SqsServiceImpl implements SqsService {
                                @Header(BOT_BASE_URL) String botUrl,
                                Acknowledgment acknowledgment) {
         acknowledgment.acknowledge();
-        pageService.parsePage(userInput);
         String googleFileUrl = "Default message";
-        File file = googleDriveService.sendFile(userEmail);
+        File file = googleDriveService.sendFile(userEmail, pageService.parsePage(userInput));
         if (file != null) {
             googleFileUrl = googleDriveService.getGoogleFileUrl(file);
         }

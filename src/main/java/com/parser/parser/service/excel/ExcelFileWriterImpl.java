@@ -2,20 +2,13 @@ package com.parser.parser.service.excel;
 
 import com.parser.parser.dto.Page;
 import org.apache.poi.ss.usermodel.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.*;
 
 @Component
 public class ExcelFileWriterImpl implements ExcelFileWriter {
-    @Value("${file.path}")
-    private String filePath;
 
-    public void writeToSheet(FileOutputStream fileOut, Page item,
-                             Sheet sheet, Workbook workbook) {
+    public void writeToSheet(Page item, Sheet sheet, Workbook workbook) {
         int count = 0;
-        try {
             Row row = sheet.createRow(Integer.parseInt(String.valueOf(item.getId())));
             row.createCell(count).setCellValue(item.getTitle());
             Cell views = row.createCell(++count);
@@ -35,11 +28,6 @@ public class ExcelFileWriterImpl implements ExcelFileWriter {
                     + "\", \""
                     + "url link"
                     + "\")");
-            workbook.write(fileOut);
-            fileOut.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Can't write data to sheet");
-        }
     }
 
     private void viewColorHandler(Workbook workbook, Cell views, String value) {
@@ -59,25 +47,38 @@ public class ExcelFileWriterImpl implements ExcelFileWriter {
         return style;
     }
 
-    private CellStyle getRed(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        style.setFillBackgroundColor(IndexedColors.RED.getIndex());
-        style.setFillPattern(FillPatternType.SQUARES);
-        return style;
-    }
+    public void createSheetTitle(Workbook workbook, Sheet sheet) {
+        CellStyle cellStyle = workbook.createCellStyle();
+        sheet.setColumnWidth(0, 10000);
+        sheet.setColumnWidth(1, 5000);
+        sheet.setColumnWidth(2, 2000);
+        sheet.setColumnWidth(3, 5000);
+        sheet.setColumnWidth(4, 7000);
+        sheet.setColumnWidth(5, 6000);
+        sheet.setColumnWidth(6, 4000);
+        sheet.setColumnWidth(7, 6000);
+        sheet.setColumnWidth(8, 6000);
+        sheet.setColumnWidth(9, 6000);
 
-    private CellStyle getYellow(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        style.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
-        style.setFillPattern(FillPatternType.SQUARES);
-        return style;
-    }
-
-    public FileOutputStream getFile() {
-        try {
-            return new FileOutputStream(filePath);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Can't find file ", e);
-        }
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cellStyle.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
+        cellStyle.setFillPattern(FillPatternType.BIG_SPOTS);
+        cellStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        row.setHeight((short) 400);
+        cell.setCellStyle(cellStyle);
+        row.createCell(0).setCellValue("Назва");
+        row.createCell(1).setCellValue("Перегляди");
+        row.createCell(2).setCellValue("Ціна");
+        row.createCell(3).setCellValue("Стан");
+        row.createCell(4).setCellValue("Область");
+        row.createCell(5).setCellValue("Дата реєстрації на олх");
+        row.createCell(6).setCellValue("Олх доставка");
+        row.createCell(7).setCellValue("Розділ");
+        row.createCell(8).setCellValue("Дата публікації");
+        row.createCell(9).setCellValue("Категорія");
+        row.createCell(10).setCellValue("Топ");
+        row.createCell(11).setCellValue("Лінк");
     }
 }

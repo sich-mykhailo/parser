@@ -4,14 +4,13 @@ import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.FileContent;
+import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.parser.parser.google.GoogleProvider;
 import com.parser.parser.notifications.EmailService;
-import com.parser.parser.utils.Constants;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,8 +19,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+
+import static com.parser.parser.utils.Constants.*;
 
 @Log4j2
 @Component
@@ -34,10 +36,10 @@ public class GoogleDriveService {
     @NonFinal String adminEmail;
 
     public String getGoogleFileUrl(File file) {
-        return Constants.GOOGLE_FILE_URL + file.getId();
+        return GOOGLE_FILE_URL + file.getId();
     }
 
-    public File sendFile(String userEmail) {
+    public File sendFile(String userEmail, ByteArrayInputStream file) {
         if (googleProvider.getDriveService() != null) {
             Drive driveService = googleProvider.getDriveService();
             File googleFile = null;
@@ -46,8 +48,7 @@ public class GoogleDriveService {
                 File fileMetadata = new File();
                 String fileName = LocalDateTime.now() + " result.xlsx";
                 fileMetadata.setName(fileName);
-                java.io.File filePath = new java.io.File(Constants.LOCAL_FILE_PATH);
-                FileContent mediaContent = new FileContent(Constants.XLSX_MIME_TYPE, filePath);
+                ByteArrayContent mediaContent = new ByteArrayContent("application/octet-stream", file.readAllBytes());
                 googleFile = driveService.files().create(fileMetadata, mediaContent)
                         .setFields("id")
                         .setIncludePermissionsForView("published")

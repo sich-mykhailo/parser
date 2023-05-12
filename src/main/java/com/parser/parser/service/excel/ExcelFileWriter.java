@@ -4,11 +4,9 @@ import com.parser.parser.dto.Page;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.FileOutputStream;
-
 public interface ExcelFileWriter {
-    FileOutputStream getFile();
 
-    void writeToSheet(FileOutputStream fileOut,
-                      Page page, Sheet sheet, Workbook workbook);
+   void writeToSheet(Page page, Sheet sheet, Workbook workbook);
+
+   void createSheetTitle(Workbook workbook, Sheet sheet);
 }
