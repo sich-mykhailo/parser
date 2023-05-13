@@ -76,7 +76,7 @@ public class GoogleDriveService {
             @Override
             public void onSuccess(Permission permission,
                                   HttpHeaders responseHeaders) {
-               log.info("Permission ID: " + permission.getId());
+               log.info("Permission successfully added");
             }
         };
 
