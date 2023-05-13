@@ -15,7 +15,7 @@ public class ExcelFileWriterImpl implements ExcelFileWriter {
             viewColorHandler(workbook, views, item.getViews());
             row.createCell(++count).setCellValue(item.getPrice());
             row.createCell(++count).setCellValue(item.getState());
-            row.createCell(++count).setCellValue(item.getOblast());
+            row.createCell(++count).setCellValue(item.getDistrict());
             row.createCell(++count).setCellValue(item.getStartOfWork());
             row.createCell(++count).setCellValue(item.getOlxDelivery());
             row.createCell(++count).setCellValue(item.getSection());

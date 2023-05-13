@@ -65,7 +65,7 @@ public class SqsServiceImpl implements SqsService {
         body.put("email", userEmail);
         body.put("fileUrl", googleFileUrl);
         body.put("chatId", senderId);
-        body.put("userInput", userInput);
+        body.put(USER_INPUT_HEADER, userInput);
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
         restTemplate.postForEntity(botUrl + "/send-queue", requestEntity, String.class);
     }

@@ -19,7 +19,7 @@ public class    Page {
      String views;
      String orderId;
      String startOfWork;
-     String oblast;
+     String district;
      String section;
      String dateOfPublication;
      String top;

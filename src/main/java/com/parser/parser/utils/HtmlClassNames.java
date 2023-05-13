@@ -1,5 +1,9 @@
 package com.parser.parser.utils;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class HtmlClassNames {
     public static final String PRICE = "css-ddweki er34gjf0";
     public static final String ID = "css-12hdxwj er34gjf0";
@@ -14,7 +18,7 @@ public class HtmlClassNames {
     public static final String INDIVIDUAL = "css-b5m1rv er34gjf0";
     public static final String STATE = "css-b5m1rv er34gjf0";
     public static final String DELIVERY = "css-x30oa2-Text eu5v0x0";
-    public static final String FACILITY = "css-tyi2d1";
+    public static final String DISTRICT = "css-tyi2d1";
     public static final String OLX_DELIVERY = "delivery-badge__icon";
     public static final String OLX_DELIVERY_FOR_SECOND_PAGE = "css-10arydl";
     public static final String TOP_CLASS  = "inlblk icon paid type2 abs zi2";

@@ -3,7 +3,6 @@ package com.parser.parser.google.drive;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.json.GoogleJsonError;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.services.drive.Drive;
@@ -63,7 +62,7 @@ public class GoogleDriveService {
             log.info("file has been sent");
             return googleFile;
         }
-        return null;
+        return new File();
     }
 
     public void setViewPermissionsForUser(Drive driveService, String fileId, String userEmail) {
@@ -71,13 +70,13 @@ public class GoogleDriveService {
             @Override
             public void onFailure(GoogleJsonError e,
                                   HttpHeaders responseHeaders) {
-                System.err.println(e.getMessage());
+              log.warn(e.getMessage());
             }
 
             @Override
             public void onSuccess(Permission permission,
                                   HttpHeaders responseHeaders) {
-                System.out.println("Permission ID: " + permission.getId());
+               log.info("Permission ID: " + permission.getId());
             }
         };
 
@@ -91,11 +90,8 @@ public class GoogleDriveService {
                     .setFields("id")
                     .queue(batch, callback);
             batch.execute();
-        } catch (GoogleJsonResponseException e) {
-            System.err.println("Unable to modify permission: " + e.getDetails());
-            log.error("Can't get permissions for file with id: " + fileId, e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Can't get permissions for file with id: " + fileId, e);
         }
     }
 }

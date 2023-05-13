@@ -1,6 +1,7 @@
 package com.parser.parser.service;
 
 import com.parser.parser.dto.Page;
+import com.parser.parser.exceptions.ParserException;
 import com.parser.parser.service.excel.ExcelFileWriter;
 import com.parser.parser.utils.HtmlClassNames;
 import com.parser.parser.utils.JsoupConnection;
@@ -59,8 +60,8 @@ public class PageServiceImpl implements PageService {
                     Page itemRequestDto = new Page();
                     itemRequestDto.setUrl(localUrl);
                     itemRequestDto.setTitle(title);
-                    itemRequestDto.setOlxDelivery(element.getElementsByClass(OLX_DELIVERY).size() != 0 ? "1" : "0");
-                    itemRequestDto.setTop(element.getElementsByClass(TOP_CLASS).size() != 0 ? TOP : NOT_TOP);
+                    itemRequestDto.setOlxDelivery(!element.getElementsByClass(OLX_DELIVERY).isEmpty() ? "1" : "0");
+                    itemRequestDto.setTop(!element.getElementsByClass(TOP_CLASS).isEmpty() ? TOP : NOT_TOP);
                     items.add(itemRequestDto);
                 }
             } else if (Objects.nonNull(doc)) {
@@ -70,8 +71,8 @@ public class PageServiceImpl implements PageService {
                             + element.attributes().get(HtmlClassNames.URL_ATTRIBUTE_NAME);
                     Page pageRequestDto = new Page();
                     pageRequestDto.setUrl(pageUrl);
-                    pageRequestDto.setOlxDelivery(element
-                            .getElementsByClass(OLX_DELIVERY_FOR_SECOND_PAGE).size() != 0 ? "1" : "0");
+                    pageRequestDto.setOlxDelivery(!element
+                            .getElementsByClass(OLX_DELIVERY_FOR_SECOND_PAGE).isEmpty() ? "1" : "0");
                     pageRequestDto.setTop(element
                             .getElementsByClass(TOP_CLASS_FOR_SECOND_PAGE).text().equals(TOP) ? TOP : NOT_TOP);
                     items.add(pageRequestDto);
@@ -92,7 +93,7 @@ public class PageServiceImpl implements PageService {
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException("Can't write data to sheet");
+            throw new ParserException("Can't write data to sheet");
         }
     }
 }

@@ -73,7 +73,7 @@ public class ParserServiceImpl implements ParserService {
         try {
             Document doc = JsoupConnection.createConnection(itemUrl);
             if (Objects.nonNull(doc)) {
-                String id = doc.getElementsByClass(ID).size() != 0
+                String id = !doc.getElementsByClass(ID).isEmpty()
                         ? doc.getElementsByClass(ID).text() : "";
 
                 itemRequestDto.setViews(getViews(ParserUtils.mapToNumbers(id).toString()));
@@ -87,13 +87,13 @@ public class ParserServiceImpl implements ParserService {
                 Optional.of(doc.getElementsByClass(DATE))
                         .ifPresent(e -> itemRequestDto.setRegistrationDate(e.text()));
 
-                Optional.of(doc.getElementsByClass(FACILITY))
-                        .ifPresent(e -> itemRequestDto.setOblast(e.text()));
+                Optional.of(doc.getElementsByClass(DISTRICT))
+                        .ifPresent(e -> itemRequestDto.setDistrict(e.text()));
 
                 Optional.ofNullable(doc.getElementsByClass(START_OF_WORK).first())
                         .ifPresent(e -> itemRequestDto.setStartOfWork(e.text()));
 
-                itemRequestDto.setSection(doc.getElementsByClass(SECTION).size() != 0
+                itemRequestDto.setSection(!doc.getElementsByClass(SECTION).isEmpty()
                         ? doc.getElementsByClass(SECTION).get(1).text() : "");
 
                 Optional.ofNullable(doc.getElementsByClass(DATE_OF_PUBLICATION).first())
@@ -104,7 +104,7 @@ public class ParserServiceImpl implements ParserService {
 
                 handleListData(doc.getElementsByClass(HtmlClassNames.STATE), itemRequestDto);
                 Elements deliveryElement = doc.getElementsByClass(DELIVERY);
-                itemRequestDto.setOlxDelivery(deliveryElement.size() != 0 ? "Є" : "НЕМА");
+                itemRequestDto.setOlxDelivery(!deliveryElement.isEmpty() ? "Є" : "НЕМА");
             }
         } catch (Exception e) {
             log.warn("Can't get item url: " + itemUrl, e);

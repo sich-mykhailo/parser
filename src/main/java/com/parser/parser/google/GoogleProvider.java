@@ -10,6 +10,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
+import com.parser.parser.exceptions.GoogleServiceException;
 import com.parser.parser.utils.Constants;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -92,8 +93,7 @@ public class GoogleProvider {
         try {
             return objectMapper.readTree(response).get("access_token").asText();
         } catch (JsonProcessingException e) {
-            log.error("Can't get access token from refresh token", e);
-            throw new RuntimeException("Can't get access token from refresh token", e);
+            throw new GoogleServiceException("Can't get access token from refresh token", e);
         }
     }
 

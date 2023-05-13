@@ -1,5 +1,9 @@
 package com.parser.parser.utils;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OlxUrls {
 
     public static final String BASE ="https://www.olx.ua/";
