@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.cloud.aws.messaging.listener.Acknowledgment;
@@ -30,6 +31,7 @@ import static com.parser.parser.utils.Constants.*;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Log4j2
 public class SqsServiceImpl implements SqsService {
     PageService pageService;
     GoogleDriveService googleDriveService;
@@ -65,8 +67,9 @@ public class SqsServiceImpl implements SqsService {
         body.put("email", userEmail);
         body.put("fileUrl", googleFileUrl);
         body.put("chatId", senderId);
-        body.put(USER_INPUT_HEADER, userInput);
+        body.put("userInput", userInput);
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        log.info("BOT URL: " + botUrl);
         restTemplate.postForEntity(botUrl + "/send-queue", requestEntity, String.class);
     }
 }
