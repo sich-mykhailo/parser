@@ -19,3 +19,6 @@ If there is a parser instance that is not processing any requests and a new elem
 * Amazon SQS: a fully managed message queuing service provided by Amazon Web Services (AWS).
 * Lombok: a Java library that helps reduce boilerplate code by automatically generating getter, setter, and other utility   methods during compilation.
 * Google API: a collection of APIs provided by Google for interacting with various Google services, such as Google Drive, Gmail.
+
+<h2>Run applicatiion</h2>
+1. 
