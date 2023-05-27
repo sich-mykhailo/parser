@@ -21,4 +21,34 @@ If there is a parser instance that is not processing any requests and a new elem
 * Google API: a collection of APIs provided by Google for interacting with various Google services, such as Google Drive, Gmail.
 
 <h2>Run applicatiion</h2>
-1. 
+1. Install a Docker on your computer.<br>
+2. Create a Docker image with any name.<br>
+3. Run a Docker container with the following environment variables:
+
+a) Set the port:
+* PORT
+
+b) Set the number of pages the parser will process (maximum 25, minimum 1):
+
+* PAGES_TO_PROCESS
+
+c) Configure the Google Play Cloud for the Google Drive API application:
+* GOOGLE_DRIVE_SECRET
+* GOOGLE_DRIVE_CLIENT_ID
+* GOOGLE_DRIVE_REFRESH_TOKEN
+* PARSER_ADMIN_EMAIL
+
+d) Insert the admin email:
+
+* PARSER_ADMIN_EMAIL
+* MAIL_USER_NAME
+* MAIL_PASSWORD
+
+e) Insert the AWS credentials that you use in the Super Parser Bot application:
+
+* AWS_SQS_URI
+* AWS_ACCESS_KEY
+* AWS_SECRET_KEY
+
+f) Register on OLX and use your Bearer Token (you can use any valid token, but then the statistics on views will not work, and the column in the table will be zero
+* OLX_TOKEN
