@@ -1,5 +1,5 @@
 <h1>Description</h1>
-This app is an independent module for parsing OLX pages. Olx is the most visited website in Ukraine. It takes information about the request from the queue and collects information about the number of views, publication date, price, product name etc. As a result, this application creates an Excel file and sends it to Google Drive.
+This app is an independent module for parsing OLX pages. It takes information about the request from the queue and collects information about the number of views, publication date, price, product name etc. As a result, this application creates an Excel file and sends it to Google Drive.
 <img width="1173" alt="211543063-7e26ca6e-a803-469d-8b68-f929100c690a" src="https://github.com/sich-mykhailo/parser/assets/11314278/33670c42-6d2d-45e8-918d-45803643b546">
 
 This application works together with a [Telegram bot application](https://github.com/sich-mykhailo/superTelegrambot) that includes authorization and allows communication with clients through a Telegram bot.
