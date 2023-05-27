@@ -10,3 +10,12 @@ The Telegram bot application contains user information, the number of used reque
 
 
 If there is a parser instance that is not processing any requests and a new element appears in the SQS, it will immediately pick it up and start processing. However, if all parser instances are busy processing requests, the queue will fill up and wait until at least one becomes available. The first instance that becomes available will pick up the first element in the queue for processing.
+
+<h2>The technologies used are:</h2>
+
+* Spring Boot: a Java framework for building stand-alone, production-grade applications.
+* Jsoup: a Java library for parsing HTML and manipulating HTML documents.
+* Apache POI: a Java library for reading and writing Microsoft Office file formats, such as Excel and Word.
+* Amazon SQS: a fully managed message queuing service provided by Amazon Web Services (AWS).
+* Lombok: a Java library that helps reduce boilerplate code by automatically generating getter, setter, and other utility   methods during compilation.
+* Google API: a collection of APIs provided by Google for interacting with various Google services, such as Google Drive, Gmail.
